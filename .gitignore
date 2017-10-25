@@ -3,3 +3,4 @@ __init__.py
 .ipynb_checkpoints/
 *.rda
 *.pyc
+*.h5

@@ -8,15 +8,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import data_handler as dh
 
-x_train, x_test = dh.load_data()
 
-print x_test[0:5]
+
+# print x_test[0:5]
 
 encoding_dim = 5000
 l2_penalty_ae = 1e-2
 noise_factor = 0.5
 
-def denoise():
+def denoise(x_train, x_test):
     x_train_noisy = x_train + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=x_train.shape)
     x_test_noisy = x_test + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=x_test.shape)
 
@@ -30,7 +30,12 @@ def denoise():
     return x_train_noisy, x_test_noisy
 
 
-def trainAE():
+def trainAE(denoise_ae=True):
+
+    x_train_target, x_test_target = dh.load_data()
+
+    if denoise_ae:
+        x_train_noisy, x_test_noisy = denoise(x_train_target, x_test_target)
 
     # this is our input placeholder
     input_img = Input(shape=(15801,))
@@ -43,22 +48,19 @@ def trainAE():
 
     autoencoder = Model(input_img, decoded)
 
-    # encoder = Model(input_img, encoded)
-    # encoded_input = Input(shape=(encoding_dim,))
-    #
-    # decoder_layer = autoencoder.layers[-1]
-    # decoder = Model(encoded_input, decoder_layer(encoded_input))
-
     autoencoder.compile(optimizer='adadelta', loss='mse')
     # autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
-
-    autoencoder.fit(x_train, x_train,
+    autoencoder.fit(x_train_noisy, x_train_target,
                     epochs=10,
                     batch_size=50,
                     shuffle=True,
-                    validation_data=(x_test, x_test),
+                    validation_data=(x_test_noisy, x_test_target),
                     callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
+
+    autoencoder.save('autoencoder.h5')
+
+    return autoencoder
 
     # note that we take them from the *test* set
     # encoded_imgs = encoder.predict(x_test)
@@ -66,5 +68,5 @@ def trainAE():
     # return decoded_imgs
 
 if __name__ == "__main__":
-    x_train, x_test = denoise()
+    # x_train, x_test = denoise()
     result = trainAE()
