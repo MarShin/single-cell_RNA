@@ -1,6 +1,6 @@
 from keras.layers import Input, Dense, merge, Dropout, Activation
 from keras.models import Model
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, EarlyStopping
 from keras.regularizers import l2
 
 
@@ -52,11 +52,12 @@ def trainAE(denoise_ae=True):
     # autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
 
     autoencoder.fit(x_train_noisy, x_train_target,
-                    epochs=10,
+                    epochs=50,
                     batch_size=50,
                     shuffle=True,
                     validation_data=(x_test_noisy, x_test_target),
-                    callbacks=[TensorBoard(log_dir='/tmp/autoencoder')])
+                    callbacks=[TensorBoard(log_dir='/tmp/autoencoder'), EarlyStopping(
+                            monitor='val_loss', patience=25,  mode='auto')])
 
     autoencoder.save('autoencoder.h5')
 

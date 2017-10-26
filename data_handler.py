@@ -15,8 +15,8 @@ class Sample:
         self.y = y
 
 def load_data():
-    df_e10 = pd.read_csv('e10.csv')
-    df_e12 = pd.read_csv('e12.csv')
+    df_e10 = pd.read_csv('data/e10.csv')
+    df_e12 = pd.read_csv('data/e12.csv')
     # df_e12labls = pdf.read_csv('cell.identity.csv')
 
     combined = pd.concat([df_e10,df_e12])
