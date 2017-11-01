@@ -38,13 +38,14 @@ def trainAE(denoise_ae=True):
         x_train_noisy, x_test_noisy = denoise(x_train_target, x_test_target)
 
     # this is our input placeholder
-    input_img = Input(shape=(15801,))
+    input_dim = x_train_noisy.shape[1]
+    input_img = Input(shape=(input_dim,))
 
     encoded = Dense(encoding_dim, activation='relu')(input_img)
     encoded = Dense(2500, activation='relu', kernel_regularizer=l2(l2_penalty_ae))(encoded)
 
     decoded = Dense(5000, activation='relu', kernel_regularizer=l2(l2_penalty_ae))(encoded)
-    decoded = Dense(15801, activation='sigmoid' ,kernel_regularizer=l2(l2_penalty_ae))(encoded)
+    decoded = Dense(input_dim, activation='sigmoid' ,kernel_regularizer=l2(l2_penalty_ae))(encoded)
 
     autoencoder = Model(input_img, decoded)
 
