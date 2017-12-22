@@ -1,6 +1,7 @@
 *.csv
 __init__.py
 .ipynb_checkpoints/
+ref/
 *.rda
 *.pyc
 *.h5
